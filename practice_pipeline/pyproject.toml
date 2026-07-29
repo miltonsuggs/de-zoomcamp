@@ -1,5 +1,5 @@
 [project]
-name = "pipeline"
+name = "practice-pipeline"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -8,6 +8,7 @@ dependencies = [
     "pandas>=3.0.3",
     "psycopg[binary,pool]>=3.3.4",
     "pyarrow>=25.0.0",
+    "click>=8.1.0",
     "sqlalchemy>=2.0.51",
     "tqdm>=4.69.0",
 ]

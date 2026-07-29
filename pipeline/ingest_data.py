@@ -1,15 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[62]:
-
 
 import pandas as pd
+import click
 from sqlalchemy import create_engine
 from tqdm.auto import tqdm
-
-# get_ipython().system('uv add sqlalchemy "psycopg[binary,pool]"')
-# get_ipython().system('uv add tqdm')
 
 
 dtype = {
@@ -37,25 +33,33 @@ parse_dates = [
 ]
 
 
-def run():
+@click.command()
+@click.option("--pg-user", default="root", show_default=True, help="Postgres username.")
+@click.option("--pg-pass", default="root", show_default=True, help="Postgres password.")
+@click.option("--pg-host", default="localhost", show_default=True, help="Postgres host.")
+@click.option("--pg-port", type=int, default=5432, show_default=True, help="Postgres port.")
+@click.option("--pg-db", default="ny_taxi", show_default=True, help="Postgres database name.")
+@click.option("--year", type=int, default=2021, show_default=True, help="Taxi data year to ingest.")
+@click.option("--month", type=int, default=1, show_default=True, help="Taxi data month to ingest.")
+@click.option("--target-table", default="yellow_taxi_data", show_default=True, help="Destination table name.")
+@click.option("--chunksize", type=int, default=100000, show_default=True, help="Number of rows per chunk.")
+def main(pg_user, pg_pass, pg_host, pg_port, pg_db, year, month, target_table, chunksize):
+    run(
+        pg_user=pg_user,
+        pg_pass=pg_pass,
+        pg_host=pg_host,
+        pg_port=pg_port,
+        pg_db=pg_db,
+        year=year,
+        month=month,
+        target_table=target_table,
+        chunksize=chunksize,
+    )
 
-    pg_user = 'root'
-    pg_pass = 'root'
-    pg_host = 'localhost'
-    pg_port =5432
-    pg_db = 'ny_taxi'
 
-    year = 2021
-    month = 1
-
-    chunksize = 100000
-
-    target_table = 'yellow_taxi_data'
-
-    # Read a sample of the data
-    prefix = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/'
-    url = f'{prefix}/yellow_tripdata_{year}-{month:02d}.csv.gz'
-    df = pd.read_csv(url, nrows=100, dtype=dtype, parse_dates=parse_dates)
+def run(pg_user="root", pg_pass="root", pg_host="localhost", pg_port=5432, pg_db="ny_taxi", year=2021, month=1, target_table="yellow_taxi_data", chunksize=100000):
+    prefix = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow'
+    url = f"{prefix}/yellow_tripdata_{year}-{month:02d}.csv.gz"
 
     engine = create_engine(f'postgresql+psycopg://{pg_user}:{pg_pass}@{pg_host}:{pg_port}/{pg_db}')
 
@@ -91,10 +95,5 @@ def run():
         print("Inserted:", len(df_chunk))
 
 
-if __name__ == '__main__':
-    run()
-# In[ ]:
-
-
-
-
+if __name__ == "__main__":
+    main()

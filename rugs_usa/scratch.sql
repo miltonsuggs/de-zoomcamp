@@ -1,0 +1,1 @@
+SELECT COUNT(*) AS total_rows from fct_order_lines
