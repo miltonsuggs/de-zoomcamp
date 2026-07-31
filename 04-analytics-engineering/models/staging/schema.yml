@@ -1,0 +1,28 @@
+version: 2
+
+sources:
+  - name: staging
+    database: kestra-sandbox-503816
+    schema: zoomcamp2
+    tables:
+      - name: green_tripdata
+      - name: yellow_tripdata
+
+models:
+  - name: stg_yellow_tripdata
+    columns:
+      - name: vendor_id
+        tests:
+          - not_null
+      - name: pickup_location_id
+        tests:
+          - not_null
+
+  - name: stg_green_tripdata
+    columns:
+      - name: vendor_id
+        tests:
+          - not_null
+      - name: pickup_location_id
+        tests:
+          - not_null
